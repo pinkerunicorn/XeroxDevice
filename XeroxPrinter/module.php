@@ -27,7 +27,7 @@ class XeroxPrinter extends IPSModule
         $this->RegisterTimer('UpdateTimer', 0, 'XEROX_UpdateStatus($_IPS[\'TARGET\']);');
 
         // Feste Variablen
-        $this->RegisterVariableInteger('LastUpdate', 'Letztes erfolgreiches Update', '~UnixTimestamp', 999);
+        $this->RegisterVariableInteger('LastUpdate', '⏱️ Letztes erfolgreiches Update', '~UnixTimestamp', 999);
     }
 
     public function ApplyChanges()
@@ -50,7 +50,14 @@ class XeroxPrinter extends IPSModule
                 // Generiere einen sicheren, eindeutigen Ident aus der OID
                 $ident = 'OID_' . str_replace('.', '_', ltrim($oid, '.'));
                 
-                $this->RegisterVariableFloat($ident, $name, '', $index * 10);
+                $emoji = '🖨️';
+                if (stripos($name, 'Cyan') !== false) $emoji = '🟦';
+                elseif (stripos($name, 'Magenta') !== false) $emoji = '🟥';
+                elseif (stripos($name, 'Gelb') !== false || stripos($name, 'Yellow') !== false) $emoji = '🟨';
+                elseif (stripos($name, 'Schwarz') !== false || stripos($name, 'Black') !== false) $emoji = '⬛';
+                elseif (stripos($name, 'Seiten') !== false || stripos($name, 'Papier') !== false) $emoji = '📄';
+                
+                $this->RegisterVariableFloat($ident, $emoji . ' ' . $name, '', $index * 10);
                 $keepVariables[] = $ident;
             }
         }
