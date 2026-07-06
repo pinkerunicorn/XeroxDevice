@@ -567,9 +567,9 @@ class rfc1155_OctetString extends rfc1155_Asn1Object
   {
     for($i = strlen($this->value) - 1; $i >= 0; $i--)
     {
-      if($this->value{$i} != "\n" && $this->value{$i} != "\t" && $this->value{$i} != "\r")
+      if($this->value[$i] != "\n" && $this->value[$i] != "\t" && $this->value[$i] != "\r")
       {
-        if(ord($this->value{$i}) < 16 || ord($this->value{$i}) > 127)
+        if(ord($this->value[$i]) < 16 || ord($this->value[$i]) > 127)
         {
           return false;
         }
@@ -589,7 +589,7 @@ class rfc1155_OctetString extends rfc1155_Asn1Object
   {
     $ret = '';
     for($i = 0; $i < strlen($this->value); $i++)
-      $ret .= str_pad(dechex(ord($this->value{$i})), 2, '0', STR_PAD_LEFT) . ' ';
+      $ret .= str_pad(dechex(ord($this->value[$i])), 2, '0', STR_PAD_LEFT) . ' ';
     return trim($ret);
   }
 
