@@ -11,23 +11,58 @@ class XeroxPrinter extends IPSModule
         $this->RegisterPropertyString('Community', 'public');
         $this->RegisterPropertyInteger('UpdateInterval', 60);
 
+        // Standard-OIDs als JSON Liste registrieren
+        $defaultOIDs = json_encode([
+            ['Name' => 'Seiten insgesamt', 'OID' => '1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.200'],
+            ['Name' => 'Schwarzweißseiten', 'OID' => '1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.201'],
+            ['Name' => 'Farbseiten', 'OID' => '1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.202'],
+            ['Name' => 'Restseiten Cyan', 'OID' => '1.3.6.1.2.1.43.11.1.1.9.1.4'],
+            ['Name' => 'Restseiten Magenta', 'OID' => '1.3.6.1.2.1.43.11.1.1.9.1.3'],
+            ['Name' => 'Restseiten Gelb', 'OID' => '1.3.6.1.2.1.43.11.1.1.9.1.2'],
+            ['Name' => 'Restseiten Schwarz', 'OID' => '1.3.6.1.2.1.43.11.1.1.9.1.1']
+        ]);
+        $this->RegisterPropertyString('OIDList', $defaultOIDs);
+
         // Timer registrieren
         $this->RegisterTimer('UpdateTimer', 0, 'XEROX_UpdateStatus($_IPS[\'TARGET\']);');
-
-        // Variablen registrieren
-        $this->RegisterVariableFloat('TotalPages', 'Seiten insgesamt', '', 10);
-        $this->RegisterVariableFloat('MonoPages', 'Schwarzweißseiten', '', 20);
-        $this->RegisterVariableFloat('ColorPages', 'Farbseiten', '', 30);
-        
-        $this->RegisterVariableFloat('TonerCyan', 'Restseiten Cyan', '', 40);
-        $this->RegisterVariableFloat('TonerMagenta', 'Restseiten Magenta', '', 50);
-        $this->RegisterVariableFloat('TonerYellow', 'Restseiten Gelb', '', 60);
-        $this->RegisterVariableFloat('TonerBlack', 'Restseiten Schwarz', '', 70);
     }
 
     public function ApplyChanges()
     {
         parent::ApplyChanges();
+
+        // OID Liste auslesen und Variablen anlegen
+        $oidList = json_decode($this->ReadPropertyString('OIDList'), true);
+        $keepVariables = [];
+
+        if (is_array($oidList)) {
+            foreach ($oidList as $index => $item) {
+                $oid = trim($item['OID']);
+                $name = trim($item['Name']);
+                
+                if (empty($oid) || empty($name)) {
+                    continue;
+                }
+                
+                // Generiere einen sicheren, eindeutigen Ident aus der OID
+                $ident = 'OID_' . str_replace('.', '_', ltrim($oid, '.'));
+                
+                $this->RegisterVariableFloat($ident, $name, '', $index * 10);
+                $keepVariables[] = $ident;
+            }
+        }
+
+        // Cleanup alter Variablen (nicht mehr in der Liste oder alte statische Idents)
+        $children = IPS_GetChildrenIDs($this->InstanceID);
+        foreach ($children as $childID) {
+            $obj = IPS_GetObject($childID);
+            if ($obj['ObjectType'] == 2) { // Ist eine Variable
+                $ident = $obj['ObjectIdent'];
+                if (!in_array($ident, $keepVariables)) {
+                    $this->UnregisterVariable($ident);
+                }
+            }
+        }
 
         $interval = $this->ReadPropertyInteger('UpdateInterval');
         if ($interval > 0) {
@@ -48,22 +83,23 @@ class XeroxPrinter extends IPSModule
             return;
         }
 
-        // Standard-OIDs
-        $oids = [
-            'TotalPages' => '1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.200',
-            'MonoPages' => '1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.201',
-            'ColorPages' => '1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.202',
-            'TonerCyan' => '1.3.6.1.2.1.43.11.1.1.9.1.4',
-            'TonerMagenta' => '1.3.6.1.2.1.43.11.1.1.9.1.3',
-            'TonerYellow' => '1.3.6.1.2.1.43.11.1.1.9.1.2',
-            'TonerBlack' => '1.3.6.1.2.1.43.11.1.1.9.1.1'
-        ];
+        $oidList = json_decode($this->ReadPropertyString('OIDList'), true);
+        if (!is_array($oidList) || empty($oidList)) {
+            $this->SendDebug("Update", "Keine OIDs konfiguriert.", 0);
+            return;
+        }
 
         require_once(__DIR__ . '/../libs/phpSNMP/snmp.php');
         $snmp = new snmp();
         $snmp->version = SNMP_VERSION_2;
 
-        foreach ($oids as $ident => $oid) {
+        foreach ($oidList as $item) {
+            $oid = trim($item['OID']);
+            $name = trim($item['Name']);
+            if (empty($oid) || empty($name)) continue;
+
+            $ident = 'OID_' . str_replace('.', '_', ltrim($oid, '.'));
+            
             $result = @$snmp->get($host, $oid, ['community' => $community]);
             
             if ($result !== false && $result !== null && is_array($result)) {
@@ -74,13 +110,13 @@ class XeroxPrinter extends IPSModule
                 $value = preg_replace('/[^0-9.]/', '', $raw_value);
                 
                 if (is_numeric($value)) {
-                    $this->SendDebug("SNMP", "$ident ($oid) = $value", 0);
+                    $this->SendDebug("SNMP", "$name ($oid) = $value", 0);
                     $this->SetValue($ident, (float)$value);
                 } else {
-                    $this->SendDebug("SNMP", "$ident ($oid) = ungültiger Wert ($raw_value)", 0);
+                    $this->SendDebug("SNMP", "$name ($oid) = ungültiger Wert ($raw_value)", 0);
                 }
             } else {
-                $this->SendDebug("SNMP-Error", "Fehler beim Abrufen von $ident ($oid)", 0);
+                $this->SendDebug("SNMP-Error", "Fehler beim Abrufen von $name ($oid)", 0);
             }
             
             // Kleine Pause

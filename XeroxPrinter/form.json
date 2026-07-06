@@ -13,7 +13,37 @@
         {
             "type": "NumberSpinner",
             "name": "UpdateInterval",
-            "caption": "Update Intervall (Sekunden)"
+            "caption": "Abfrage-Intervall (Sekunden)",
+            "suffix": "s",
+            "minimum": 0
+        },
+        {
+            "type": "List",
+            "name": "OIDList",
+            "caption": "Auszulesende OIDs",
+            "add": true,
+            "delete": true,
+            "sort": true,
+            "columns": [
+                {
+                    "caption": "Name",
+                    "name": "Name",
+                    "width": "250px",
+                    "add": "Neue Variable",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "OID",
+                    "name": "OID",
+                    "width": "auto",
+                    "add": "1.3.6.1.2.1...",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                }
+            ]
         }
     ],
     "actions": [
