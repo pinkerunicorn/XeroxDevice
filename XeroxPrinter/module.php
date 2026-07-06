@@ -59,31 +59,25 @@ class XeroxPrinter extends IPSModule
             'TonerBlack' => '1.3.6.1.2.1.43.11.1.1.9.1.1'
         ];
 
+        require_once(__DIR__ . '/../libs/phpSNMP/snmp.php');
+        $snmp = new snmp();
+        $snmp->version = SNMP_VERSION_2;
+
         foreach ($oids as $ident => $oid) {
-            $cmd = sprintf('snmpget -v 2c -c %s -Oqv %s %s 2>&1', 
-                escapeshellarg($community), 
-                escapeshellarg($host), 
-                escapeshellarg($oid)
-            );
+            $result = @$snmp->get($host, $oid, ['community' => $community]);
             
-            $output = [];
-            $returnVar = -1;
-            exec($cmd, $output, $returnVar);
-            
-            if ($returnVar === 0 && isset($output[0])) {
-                $value = trim($output[0]);
-                // Bereinigen, falls doch Text drin steht
-                $value = preg_replace('/[^0-9.]/', '', $value);
+            if ($result !== false && $result !== null) {
+                // Bereinigen, falls Text wie "Gauge32:" oder ähnliches drin steht
+                $value = preg_replace('/[^0-9.]/', '', $result);
                 
                 if (is_numeric($value)) {
                     $this->SendDebug("SNMP", "$ident ($oid) = $value", 0);
                     $this->SetValue($ident, (float)$value);
                 } else {
-                    $this->SendDebug("SNMP", "$ident ($oid) = ungültiger Wert ($output[0])", 0);
+                    $this->SendDebug("SNMP", "$ident ($oid) = ungültiger Wert ($result)", 0);
                 }
             } else {
-                $error = implode(" ", $output);
-                $this->SendDebug("SNMP-Error", "Befehl fehlgeschlagen (Code: $returnVar). Installiertes snmp-Paket im Docker-Container prüfen! Output: $error", 0);
+                $this->SendDebug("SNMP-Error", "Fehler beim Abrufen von $ident ($oid)", 0);
             }
             
             // Kleine Pause
