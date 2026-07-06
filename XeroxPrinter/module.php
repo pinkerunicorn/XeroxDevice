@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 class XeroxPrinter extends IPSModule
 {
-    public function Create()
+    public function Create(): void
     {
         parent::Create();
 
@@ -30,7 +32,7 @@ class XeroxPrinter extends IPSModule
         $this->RegisterVariableInteger('LastUpdate', '⏱️ Letztes erfolgreiches Update', '~UnixTimestamp', 999);
     }
 
-    public function ApplyChanges()
+    public function ApplyChanges(): void
     {
         parent::ApplyChanges();
 
@@ -83,7 +85,7 @@ class XeroxPrinter extends IPSModule
         }
     }
 
-    public function UpdateStatus()
+    public function UpdateStatus(): void
     {
         $host = $this->ReadPropertyString('Host');
         $community = $this->ReadPropertyString('Community');
