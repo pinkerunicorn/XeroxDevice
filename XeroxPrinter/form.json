@@ -1,0 +1,26 @@
+{
+    "elements": [
+        {
+            "type": "ValidationTextBox",
+            "name": "Host",
+            "caption": "IP-Adresse / Hostname"
+        },
+        {
+            "type": "ValidationTextBox",
+            "name": "Community",
+            "caption": "SNMP Community"
+        },
+        {
+            "type": "NumberSpinner",
+            "name": "UpdateInterval",
+            "caption": "Update Intervall (Sekunden)"
+        }
+    ],
+    "actions": [
+        {
+            "type": "Button",
+            "label": "Status jetzt aktualisieren",
+            "onClick": "XEROX_UpdateStatus($id);"
+        }
+    ]
+}
