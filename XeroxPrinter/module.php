@@ -66,15 +66,18 @@ class XeroxPrinter extends IPSModule
         foreach ($oids as $ident => $oid) {
             $result = @$snmp->get($host, $oid, ['community' => $community]);
             
-            if ($result !== false && $result !== null) {
+            if ($result !== false && $result !== null && is_array($result)) {
+                // Das phpSNMP-Skript gibt ein Array zurück: [oid => wert]
+                $raw_value = (string)current($result);
+                
                 // Bereinigen, falls Text wie "Gauge32:" oder ähnliches drin steht
-                $value = preg_replace('/[^0-9.]/', '', $result);
+                $value = preg_replace('/[^0-9.]/', '', $raw_value);
                 
                 if (is_numeric($value)) {
                     $this->SendDebug("SNMP", "$ident ($oid) = $value", 0);
                     $this->SetValue($ident, (float)$value);
                 } else {
-                    $this->SendDebug("SNMP", "$ident ($oid) = ungültiger Wert ($result)", 0);
+                    $this->SendDebug("SNMP", "$ident ($oid) = ungültiger Wert ($raw_value)", 0);
                 }
             } else {
                 $this->SendDebug("SNMP-Error", "Fehler beim Abrufen von $ident ($oid)", 0);
