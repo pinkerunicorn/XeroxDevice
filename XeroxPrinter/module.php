@@ -25,6 +25,9 @@ class XeroxPrinter extends IPSModule
 
         // Timer registrieren
         $this->RegisterTimer('UpdateTimer', 0, 'XEROX_UpdateStatus($_IPS[\'TARGET\']);');
+
+        // Feste Variablen
+        $this->RegisterVariableInteger('LastUpdate', 'Letztes erfolgreiches Update', '~UnixTimestamp', 999);
     }
 
     public function ApplyChanges()
@@ -33,7 +36,7 @@ class XeroxPrinter extends IPSModule
 
         // OID Liste auslesen und Variablen anlegen
         $oidList = json_decode($this->ReadPropertyString('OIDList'), true);
-        $keepVariables = [];
+        $keepVariables = ['LastUpdate'];
 
         if (is_array($oidList)) {
             foreach ($oidList as $index => $item) {
@@ -92,6 +95,7 @@ class XeroxPrinter extends IPSModule
         require_once(__DIR__ . '/../libs/phpSNMP/snmp.php');
         $snmp = new snmp();
         $snmp->version = SNMP_VERSION_2;
+        $success = false;
 
         foreach ($oidList as $item) {
             $oid = trim($item['OID']);
@@ -112,6 +116,7 @@ class XeroxPrinter extends IPSModule
                 if (is_numeric($value)) {
                     $this->SendDebug("SNMP", "$name ($oid) = $value", 0);
                     $this->SetValue($ident, (float)$value);
+                    $success = true;
                 } else {
                     $this->SendDebug("SNMP", "$name ($oid) = ungültiger Wert ($raw_value)", 0);
                 }
@@ -121,6 +126,10 @@ class XeroxPrinter extends IPSModule
             
             // Kleine Pause
             IPS_Sleep(50);
+        }
+
+        if ($success) {
+            $this->SetValue('LastUpdate', time());
         }
     }
 }
