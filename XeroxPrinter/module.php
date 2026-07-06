@@ -47,21 +47,19 @@ class XeroxPrinter extends IPSModule
         $iid = @IPS_GetObjectIDByIdent($ident, $this->InstanceID);
         if ($iid === false) {
             // Instanz erstellen
-            $iid = IPS_CreateInstance("{1CEEA22D-1111-40D4-AD5D-7D15A75FA84F}");
+            $iid = IPS_CreateInstance("{EC3FE0F1-F688-3D36-95BE-5E3A97ED65A2}");
             IPS_SetParent($iid, $this->InstanceID);
             IPS_SetIdent($iid, $ident);
             IPS_SetName($iid, $name);
         }
 
         // Konfiguration setzen (Float = Type 2, Integer = Type 1)
-        IPS_SetConfiguration($iid, json_encode([
-            "IPAddress" => $host,
-            "Community" => $community,
-            "Version" => 1, // SNMPv2c
-            "OID" => $oid,
-            "UpdateInterval" => $interval * 1000,
-            "Type" => 2 // Der Screenshot zeigte Float an, daher Type 2
-        ]));
+        IPS_SetProperty($iid, "IPAddress", $host);
+        IPS_SetProperty($iid, "Community", $community);
+        IPS_SetProperty($iid, "Version", 1); // SNMPv2c
+        IPS_SetProperty($iid, "OID", $oid);
+        IPS_SetProperty($iid, "UpdateInterval", $interval * 1000);
+        IPS_SetProperty($iid, "Type", 2); // Der Screenshot zeigte Float an, daher Type 2
         
         IPS_ApplyChanges($iid);
     }
