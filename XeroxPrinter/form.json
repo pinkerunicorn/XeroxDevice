@@ -18,8 +18,9 @@
     ],
     "actions": [
         {
-            "type": "Label",
-            "label": "Die Variablen werden automatisch als Symcon SNMP-Instanzen unterhalb dieses Moduls angelegt und durch IP-Symcon aktualisiert."
+            "type": "Button",
+            "label": "Status jetzt aktualisieren",
+            "onClick": "XEROX_UpdateStatus($id);"
         }
     ]
 }
