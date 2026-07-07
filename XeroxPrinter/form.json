@@ -23,7 +23,7 @@
             "caption": "Auszulesende OIDs",
             "add": true,
             "delete": true,
-            "sort": true,
+            "changeOrder": true,
             "columns": [
                 {
                     "caption": "Name",
