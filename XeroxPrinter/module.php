@@ -29,16 +29,17 @@ class XeroxPrinter extends IPSModule
         $this->RegisterTimer('UpdateTimer', 0, 'XEROX_UpdateStatus($_IPS[\'TARGET\']);');
 
         // Feste Variablen
-        $this->RegisterVariableInteger('LastUpdate', '⏱️ Letztes erfolgreiches Update', '', 999);
+        $this->RegisterVariableInteger('LastUpdate', '⏱️ Letztes erfolgreiches Update', '~UnixTimestamp', 999);
     }
 
     public function ApplyChanges(): void
     {
         parent::ApplyChanges();
 
-        IPS_SetVariableCustomPresentation($this->GetIDForIdent('LastUpdate'), [
-            'PRESENTATION' => VARIABLE_PRESENTATION_DATETIME
-        ]);
+        if (function_exists('IPS_SetVariableCustomPresentation')) {
+            // Self-Healing
+            @IPS_SetVariableCustomPresentation($this->GetIDForIdent('LastUpdate'), []);
+        }
 
         // OID Liste auslesen und Variablen anlegen
         $oidList = json_decode($this->ReadPropertyString('OIDList'), true);
