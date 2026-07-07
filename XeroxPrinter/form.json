@@ -28,7 +28,7 @@
                 {
                     "caption": "Name",
                     "name": "Name",
-                    "width": "250px",
+                    "width": "auto",
                     "add": "Neue Variable",
                     "edit": {
                         "type": "ValidationTextBox"
@@ -54,3 +54,4 @@
         }
     ]
 }
+
