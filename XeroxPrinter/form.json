@@ -28,7 +28,7 @@
                 {
                     "caption": "Name",
                     "name": "Name",
-                    "width": "auto",
+                    "width": "150px",
                     "add": "Neue Variable",
                     "edit": {
                         "type": "ValidationTextBox"
@@ -37,7 +37,7 @@
                 {
                     "caption": "OID",
                     "name": "OID",
-                    "width": "auto",
+                    "width": "150px",
                     "add": "1.3.6.1.2.1...",
                     "edit": {
                         "type": "ValidationTextBox"
