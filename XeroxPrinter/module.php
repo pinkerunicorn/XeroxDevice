@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-class XeroxPrinter extends IPSModule
+class XeroxPrinter extends IPSModuleStrict
 {
-    public function Create(): void
-    {
+    public function Create(): void{
         parent::Create();
 
         // Eigenschaften registrieren
@@ -32,8 +31,7 @@ class XeroxPrinter extends IPSModule
         $this->RegisterVariableInteger('LastUpdate', '⏱️ Letztes erfolgreiches Update', '~UnixTimestamp', 999);
     }
 
-    public function ApplyChanges(): void
-    {
+    public function ApplyChanges(): void{
         parent::ApplyChanges();
 
         
@@ -148,9 +146,10 @@ class XeroxPrinter extends IPSModule
         }
     }
 
-    protected function LogMessage($Message, $Type)
+    protected function LogMessage(string $Message, int $Type): bool
     {
         IPS_LogMessage('SmartVillaKunterbunt', 'XeroxPrinter: ' . $Message);
+        return true;
     }
 }
 
