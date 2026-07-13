@@ -3,14 +3,28 @@
     "name": "XeroxPrinter",
     "type": 3,
     "vendor": "SmartVillaKunterbunt",
-    "aliases": ["Xerox VersaLink", "Printer"],
+    "aliases": [
+        "Xerox VersaLink",
+        "Printer"
+    ],
     "parentRequirements": [],
     "childRequirements": [],
     "implemented": [],
     "prefix": "XEROX",
     "properties": {
-        "Host": { "type": "string", "default": "10.1.20.30" },
-        "Community": { "type": "string", "default": "public" },
-        "UpdateInterval": { "type": "integer", "default": 60 }
-    }
+        "Host": {
+            "type": "string",
+            "default": "10.1.20.30"
+        },
+        "Community": {
+            "type": "string",
+            "default": "public"
+        },
+        "UpdateInterval": {
+            "type": "integer",
+            "default": 60
+        }
+    },
+    "author": "Florian Graßinger",
+    "url": "https://github.com/pinkerunicorn/"
 }
