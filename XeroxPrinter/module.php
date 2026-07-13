@@ -151,5 +151,68 @@ class XeroxPrinter extends IPSModuleStrict
         IPS_LogMessage('SmartVillaKunterbunt', 'XeroxPrinter: ' . $Message);
         return true;
     }
+
+    public function GetConfigurationForm(): string
+    {
+        return <<<'EOT'
+{
+    "elements": [
+        {
+            "type": "ValidationTextBox",
+            "name": "Host",
+            "caption": "IP-Adresse / Hostname"
+        },
+        {
+            "type": "ValidationTextBox",
+            "name": "Community",
+            "caption": "SNMP Community"
+        },
+        {
+            "type": "NumberSpinner",
+            "name": "UpdateInterval",
+            "caption": "Abfrage-Intervall (Sekunden)",
+            "suffix": "s",
+            "minimum": 0
+        },
+        {
+            "type": "List",
+            "name": "OIDList",
+            "caption": "Auszulesende OIDs",
+            "add": true,
+            "delete": true,
+            "changeOrder": true,
+            "columns": [
+                {
+                    "caption": "Name",
+                    "name": "Name",
+                    "width": "150px",
+                    "add": "Neue Variable",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "OID",
+                    "name": "OID",
+                    "width": "150px",
+                    "add": "1.3.6.1.2.1...",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "type": "Button",
+            "label": "Status jetzt aktualisieren",
+            "onClick": "XEROX_UpdateStatus($id);"
+        }
+    ]
 }
+EOT;
+    }
+}
+
 
