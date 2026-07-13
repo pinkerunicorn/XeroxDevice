@@ -147,4 +147,10 @@ class XeroxPrinter extends IPSModule
             $this->SetValue('LastUpdate', time());
         }
     }
+
+    protected function LogMessage(string $Message, int $KL_MESSAGE = KL_MESSAGE): bool
+    {
+        IPS_LogMessage('SmartVillaKunterbunt', 'XeroxPrinter: ' . $Message);
+    }
 }
+
