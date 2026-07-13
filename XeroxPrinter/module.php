@@ -158,21 +158,37 @@ class XeroxPrinter extends IPSModuleStrict
 {
     "elements": [
         {
-            "type": "ValidationTextBox",
-            "name": "Host",
-            "caption": "IP-Adresse / Hostname"
-        },
-        {
-            "type": "ValidationTextBox",
-            "name": "Community",
-            "caption": "SNMP Community"
-        },
-        {
-            "type": "NumberSpinner",
-            "name": "UpdateInterval",
-            "caption": "Abfrage-Intervall (Sekunden)",
-            "suffix": "s",
-            "minimum": 0
+            "type": "ExpansionPanel",
+            "caption": "⚙️ Allgemeine Einstellungen",
+            "items": [
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "ValidationTextBox",
+                            "name": "Host",
+                            "caption": "IP-Adresse / Hostname"
+                        },
+                        {
+                            "type": "ValidationTextBox",
+                            "name": "Community",
+                            "caption": "SNMP Community"
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "NumberSpinner",
+                            "name": "UpdateInterval",
+                            "caption": "Abfrage-Intervall (Sekunden)",
+                            "suffix": "s",
+                            "minimum": 0
+                        }
+                    ]
+                }
+            ]
         },
         {
             "type": "List",
