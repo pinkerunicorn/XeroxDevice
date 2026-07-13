@@ -36,10 +36,9 @@ class XeroxPrinter extends IPSModule
     {
         parent::ApplyChanges();
 
-        if (function_exists('IPS_SetVariableCustomPresentation')) {
-            // Self-Healing
-            @IPS_SetVariableCustomPresentation($this->GetIDForIdent('LastUpdate'), []);
-        }
+        
+        // Self-Healing
+        @IPS_SetVariableCustomPresentation($this->GetIDForIdent('LastUpdate'), []);
 
         // OID Liste auslesen und Variablen anlegen
         $oidList = json_decode($this->ReadPropertyString('OIDList'), true);
