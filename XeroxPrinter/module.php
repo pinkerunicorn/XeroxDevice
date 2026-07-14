@@ -14,13 +14,13 @@ class XeroxPrinter extends IPSModuleStrict
 
         // Standard-OIDs als JSON Liste registrieren
         $defaultOIDs = json_encode([
-            ['Name' => 'Seiten insgesamt', 'OID' => '1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.200'],
-            ['Name' => 'Schwarzweißseiten', 'OID' => '1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.201'],
-            ['Name' => 'Farbseiten', 'OID' => '1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.202'],
-            ['Name' => 'Restseiten Cyan', 'OID' => '1.3.6.1.2.1.43.11.1.1.9.1.4'],
-            ['Name' => 'Restseiten Magenta', 'OID' => '1.3.6.1.2.1.43.11.1.1.9.1.3'],
-            ['Name' => 'Restseiten Gelb', 'OID' => '1.3.6.1.2.1.43.11.1.1.9.1.2'],
-            ['Name' => 'Restseiten Schwarz', 'OID' => '1.3.6.1.2.1.43.11.1.1.9.1.1']
+            ['Name'=> 'Seiten insgesamt', 'OID'=> '1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.200'],
+            ['Name'=> 'Schwarzweißseiten', 'OID'=> '1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.201'],
+            ['Name'=> 'Farbseiten', 'OID'=> '1.3.6.1.4.1.253.8.53.13.2.1.6.1.20.202'],
+            ['Name'=> 'Restseiten Cyan', 'OID'=> '1.3.6.1.2.1.43.11.1.1.9.1.4'],
+            ['Name'=> 'Restseiten Magenta', 'OID'=> '1.3.6.1.2.1.43.11.1.1.9.1.3'],
+            ['Name'=> 'Restseiten Gelb', 'OID'=> '1.3.6.1.2.1.43.11.1.1.9.1.2'],
+            ['Name'=> 'Restseiten Schwarz', 'OID'=> '1.3.6.1.2.1.43.11.1.1.9.1.1']
         ]);
         $this->RegisterPropertyString('OIDList', $defaultOIDs);
 
@@ -28,7 +28,7 @@ class XeroxPrinter extends IPSModuleStrict
         $this->RegisterTimer('UpdateTimer', 0, 'XEROX_UpdateStatus($_IPS[\'TARGET\']);');
 
         // Feste Variablen
-        $this->RegisterVariableInteger('LastUpdate', '⏱️ Letztes erfolgreiches Update', '~UnixTimestamp', 999);
+        $this->RegisterVariableInteger('LastUpdate', '⏱ Letztes erfolgreiches Update', '~UnixTimestamp', 999);
     }
 
     public function ApplyChanges(): void{
@@ -54,16 +54,16 @@ class XeroxPrinter extends IPSModuleStrict
                 }
                 
                 // Generiere einen sicheren, eindeutigen Ident aus der OID
-                $ident = 'OID_' . str_replace('.', '_', ltrim($oid, '.'));
+                $ident = 'OID_'. str_replace('.', '_', ltrim($oid, '.'));
                 
-                $emoji = '🖨️';
+                $emoji = '🖨';
                 if (stripos($name, 'Cyan') !== false) $emoji = '🟦';
                 elseif (stripos($name, 'Magenta') !== false) $emoji = '🟥';
                 elseif (stripos($name, 'Gelb') !== false || stripos($name, 'Yellow') !== false) $emoji = '🟨';
                 elseif (stripos($name, 'Schwarz') !== false || stripos($name, 'Black') !== false) $emoji = '⬛';
                 elseif (stripos($name, 'Seiten') !== false || stripos($name, 'Papier') !== false) $emoji = '📄';
                 
-                $this->RegisterVariableFloat($ident, $emoji . ' ' . $name, '', $index * 10);
+                $this->RegisterVariableFloat($ident, $emoji . ''. $name, '', $index * 10);
                 $keepVariables[] = $ident;
             }
         }
@@ -115,15 +115,15 @@ class XeroxPrinter extends IPSModuleStrict
             $name = trim($item['Name']);
             if (empty($oid) || empty($name)) continue;
 
-            $ident = 'OID_' . str_replace('.', '_', ltrim($oid, '.'));
+            $ident = 'OID_'. str_replace('.', '_', ltrim($oid, '.'));
             
-            $result = @$snmp->get($host, $oid, ['community' => $community]);
+            $result = @$snmp->get($host, $oid, ['community'=> $community]);
             
             if ($result !== false && $result !== null && is_array($result)) {
                 // Das phpSNMP-Skript gibt ein Array zurück: [oid => wert]
                 $raw_value = (string)current($result);
                 
-                // Bereinigen, falls Text wie "Gauge32:" oder ähnliches drin steht
+                // Bereinigen, falls Text wie "Gauge32:"oder ähnliches drin steht
                 $value = preg_replace('/[^0-9.]/', '', $raw_value);
                 
                 if (is_numeric($value)) {
@@ -148,7 +148,7 @@ class XeroxPrinter extends IPSModuleStrict
 
     protected function LogMessage(string $Message, int $Type): bool
     {
-        IPS_LogMessage('SmartVillaKunterbunt', 'XeroxPrinter: ' . $Message);
+        IPS_LogMessage('SmartVillaKunterbunt', 'XeroxPrinter: '. $Message);
         return true;
     }
 
@@ -159,7 +159,7 @@ class XeroxPrinter extends IPSModuleStrict
     "elements": [
         {
             "type": "ExpansionPanel",
-            "caption": "⚙️ Allgemeine Einstellungen",
+            "caption": "⚙ Allgemeine Einstellungen",
             "items": [
                 {
                     "type": "RowLayout",
