@@ -36,13 +36,8 @@ class XeroxPrinter extends IPSModuleStrict
         parent::ApplyChanges();
 
         
-        // Self-Healing
-        if (function_exists('IPS_SetVariableCustomPresentation')) {
-            IPS_SetVariableCustomPresentation($this->GetIDForIdent('LastUpdate'), [
-                'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-                'ICON'         => 'Clock'
-            ]);
-        }
+        // Set LastUpdate Icon
+        IPS_SetIcon($this->GetIDForIdent('LastUpdate'), 'Clock');
 
         // OID Liste auslesen und Variablen anlegen
         $oidList = json_decode($this->ReadPropertyString('OIDList'), true);
@@ -60,14 +55,13 @@ class XeroxPrinter extends IPSModuleStrict
                 // Generiere einen sicheren, eindeutigen Ident aus der OID
                 $ident = 'OID_'. str_replace('.', '_', ltrim($oid, '.'));
                 
-                $emoji = '🖨';
-                if (stripos($name, 'Cyan') !== false) $emoji = '🟦';
-                elseif (stripos($name, 'Magenta') !== false) $emoji = '🟥';
-                elseif (stripos($name, 'Gelb') !== false || stripos($name, 'Yellow') !== false) $emoji = '🟨';
-                elseif (stripos($name, 'Schwarz') !== false || stripos($name, 'Black') !== false) $emoji = '⬛';
-                elseif (stripos($name, 'Seiten') !== false || stripos($name, 'Papier') !== false) $emoji = '📄';
+                $icon = 'Document';
+                if (stripos($name, 'Cyan') !== false || stripos($name, 'Magenta') !== false || stripos($name, 'Gelb') !== false || stripos($name, 'Yellow') !== false || stripos($name, 'Schwarz') !== false || stripos($name, 'Black') !== false) {
+                    $icon = 'Drop';
+                }
                 
-                $this->RegisterVariableFloat($ident, $emoji . ''. $name, '', $index * 10);
+                $this->RegisterVariableFloat($ident, $name, '', $index * 10);
+                IPS_SetIcon($this->GetIDForIdent($ident), $icon);
                 $keepVariables[] = $ident;
             }
         }
