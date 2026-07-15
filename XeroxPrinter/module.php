@@ -29,6 +29,7 @@ class XeroxPrinter extends IPSModuleStrict
 
         // Feste Variablen
         $this->RegisterVariableInteger('LastUpdate', '⏱ Letztes erfolgreiches Update', '~UnixTimestamp', 999);
+        IPS_SetIcon($this->GetIDForIdent('LastUpdate'), 'Clock');
     }
 
     public function ApplyChanges(): void{
@@ -37,7 +38,10 @@ class XeroxPrinter extends IPSModuleStrict
         
         // Self-Healing
         if (function_exists('IPS_SetVariableCustomPresentation')) {
-            IPS_SetVariableCustomPresentation($this->GetIDForIdent('LastUpdate'), []);
+            IPS_SetVariableCustomPresentation($this->GetIDForIdent('LastUpdate'), [
+                'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+                'ICON'         => 'Clock'
+            ]);
         }
 
         // OID Liste auslesen und Variablen anlegen
