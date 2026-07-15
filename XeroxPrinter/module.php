@@ -28,8 +28,11 @@ class XeroxPrinter extends IPSModuleStrict
         $this->RegisterTimer('UpdateTimer', 0, 'XEROX_UpdateStatus($_IPS[\'TARGET\']);');
 
         // Feste Variablen
-        $this->RegisterVariableInteger('LastUpdate', '⏱ Letztes erfolgreiches Update', '~UnixTimestamp', 999);
+        $this->RegisterVariableInteger('LastUpdate', '⏱ Letztes erfolgreiches Update', '', 999);
         IPS_SetIcon($this->GetIDForIdent('LastUpdate'), 'Clock');
+        if (function_exists('IPS_SetVariableCustomPresentation')) {
+            IPS_SetVariableCustomPresentation($this->GetIDForIdent('LastUpdate'), 'UnixTimestamp');
+        }
     }
 
     public function ApplyChanges(): void{
