@@ -4,8 +4,15 @@ declare(strict_types=1);
 
 class XeroxPrinter extends IPSModuleStrict
 {
-    public function Create(): void{
+    public function Create(): void
+    {
         parent::Create();
+        if (function_exists('IPS_SetVariableCustomPresentation')) {
+            foreach(['LastUpdate'] as $ident) {
+                $id = @IPS_GetObjectIDByIdent($ident, $this->InstanceID);
+                if ($id !== false) @IPS_SetVariableCustomPresentation($id, []);
+            }
+        }
 
         // Eigenschaften registrieren
         $this->RegisterPropertyString('Host', '10.1.20.30');
