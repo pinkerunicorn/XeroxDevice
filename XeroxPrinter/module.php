@@ -163,6 +163,10 @@ class XeroxPrinter extends IPSModuleStrict
 {
     "elements": [
         {
+            "type": "Label",
+            "caption": "Hier stellst du ein, wie ich deinen Xerox Drucker erreichen kann. Gib die IP und deine SNMP Community an."
+        },
+        {
             "type": "ExpansionPanel",
             "caption": "⚙ Allgemeine Einstellungen",
             "items": [
@@ -196,6 +200,10 @@ class XeroxPrinter extends IPSModuleStrict
             ]
         },
         {
+            "type": "Label",
+            "caption": "Was soll ich auslesen? Trage hier die SNMP OIDs ein, die du überwachen möchtest. Den Namen kannst du frei wählen."
+        },
+        {
             "type": "List",
             "name": "OIDList",
             "caption": "Auszulesende OIDs",
@@ -206,7 +214,7 @@ class XeroxPrinter extends IPSModuleStrict
                 {
                     "caption": "Name",
                     "name": "Name",
-                    "width": "150px",
+                    "width": "auto",
                     "add": "Neue Variable",
                     "edit": {
                         "type": "ValidationTextBox"
